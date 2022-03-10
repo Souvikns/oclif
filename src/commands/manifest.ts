@@ -10,15 +10,18 @@ export default class Manifest extends Command {
   ]
 
   async run(): Promise<void> {
+    console.log('started command oclif manifest');
     try {
       fs.unlinkSync('oclif.manifest.json')
     } catch {}
 
     const {args} = await this.parse(Manifest)
+    console.log('[ARGS]: ', args);
     const root = path.resolve(args.path)
     let plugin = new Plugin({root, type: 'core', ignoreManifest: true, errorOnManifestCreate: true})
     if (!plugin) throw new Error('plugin not found')
     await plugin.load()
+    console.log('plugin loaded');
     if (!plugin.valid) {
       const p = require.resolve('@oclif/plugin-legacy', {paths: [process.cwd()]})
       const {PluginLegacy} = require(p)
@@ -31,8 +34,11 @@ export default class Manifest extends Command {
     }
 
     const dotfile = plugin.pjson.files.find((f: string) => f.endsWith('.oclif.manifest.json'))
+    console.log('[DOTFILE]: ', dotfile);
     const file = path.join(plugin.root, `${dotfile ? '.' : ''}oclif.manifest.json`)
+    console.log('[FILE]: ', file);
     fs.writeFileSync(file, JSON.stringify(plugin.manifest))
     this.log(`wrote manifest to ${file}`)
+    console.log('end command oclif manifest');
   }
 }
