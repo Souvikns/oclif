@@ -16,7 +16,7 @@ export default class Manifest extends Command {
     } catch {}
 
     const {args} = await this.parse(Manifest)
-    console.log('[ARGS]: ', args);
+    console.log('[ARGS]: ', JSON.stringify(args));
     const root = path.resolve(args.path)
     console.log('[ROOT]: ', root);
     let plugin = new Plugin({root, type: 'core', ignoreManifest: true, errorOnManifestCreate: true})
